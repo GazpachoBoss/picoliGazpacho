@@ -10,37 +10,45 @@ public class Estado {
 	private Censo poblacion = new Censo();
 	
 	public Estado() {
+		contratarDespedir();
 		
 	}
 
 	public void play() {
-		Stack<Ser> trabajadores= new Stack<>();
+		contratarDespedir();
+		gestionSeres();
+		industrias.reorganizarIndustrias();
+		industrias.eliminaIndustrias();
+		controlTiempo.realizarCiclo(poblacion.getPoblacion());
+
+	}
+	private void contratarDespedir() {
 		industrias.jubilarTrabajadores();
+		Stack<Ser> trabajadores= new Stack<>();
+		for (Factorias factoria : industrias.getIndustrias()) {
+			trabajadores.addAll(factoria.getTrabajadores());
+		}
+		float cantidad=(industrias.getDemanda()-industrias.getProduccion())/1000;
+		if (cantidad>0) {
+			industrias.contratarDemandantes(poblacion.getDemandantes());
+		}else if(cantidad<0) {
+			industrias.despedirTrabajadores(poblacion.getDemandantes());
+		}
+		industrias.calcularProduccionTotal();
 		poblacion.actualizarDemandantes(trabajadores);
-		industrias.contratarDemandantes(poblacion.getDemandantes());
-		
+	}
+	private void gestionSeres() {
+		poblacion.jubilarSer();
+		poblacion.nacimiento(industrias.getDemanda(), industrias.getProduccion());
 		finanzas.pagarSubvenciones(poblacion.getDemandantes(), poblacion.getPoblacion());
 		
 		for(Factorias i: industrias.getIndustrias()) {
 			finanzas.cobrarImpuestos(i.getTrabajadores());
 		}
-
-		industrias.reorganizarIndustrias();
-		industrias.eliminaIndustrias();
-		poblacion.jubiladosNuevos();
-		industrias.eliminaIndustrias();
-		industrias.despedirTrabajadores(poblacion.getDemandantes());
-		poblacion.nacimiento(industrias.getDemanda(), industrias.calcularProduccionTotal());
-		controlTiempo.realizarCiclo(poblacion.getPoblacion());
-		
-		for (Factorias factoria : industrias.getIndustrias()) {
-			trabajadores.addAll(factoria.getTrabajadores());
-		}
-		poblacion.actualizarDemandantes(trabajadores);
-		poblacion.organizarColeccionciones();
+		poblacion.morir();
 		industrias.eliminarTrabajadoresMuertos(poblacion.morir());
+		poblacion.organizarColeccionciones();
 		industrias.pagarSueldos();
-		System.out.println(poblacion.numeroMenores());
 	}
 
 	public MinisterioEconomia getFinanzas() {

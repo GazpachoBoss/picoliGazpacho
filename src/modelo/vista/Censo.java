@@ -18,7 +18,9 @@ public class Censo {
 	private int jubilados=0;
 	
 	public int getNacimientos() {
-		return nacimientos;
+		int total=nacimientos;
+		nacimientos=0;
+		return total;
 	}
 	public int getJubiladosNuevos() {
 		return jubilados;
@@ -48,12 +50,12 @@ public class Censo {
 	}
 	 public int numeroJubilados() {
 	    	int posInicial=0;
-	    	for (int i = 0; i < poblacion.size(); i++) {
-				if (poblacion.get(i).getEdad()<65) {
-					posInicial=i;
+	    	for (Ser ser : poblacion) {
+				if (ser.getEdad()>64) {
+					posInicial++;
 				}
-	    	}
-			return poblacion.size()-posInicial-1;
+			}
+			return posInicial;
 		}
 	 public int numeroMenores() {
 	    	int posInicial=0;
@@ -81,7 +83,7 @@ public class Censo {
 			ser.setEdad((int) (Math.random() * (65 - 18) + 18));
 			if (ser.getEdad()<ser.getEsperanzaVida()) {
 				poblacion.add(ser);
-				demandantes.add(ser);
+				demandantes.push(ser);
 				i++;
 			}
 		}
@@ -89,7 +91,7 @@ public class Censo {
 			Ser ser = new Ser(crearNombre(), CrearIdentificacion(), (int) (Math.random() * (90)));
 			ser.setEdad((int) (Math.random() * (90 - 65) + 65));
 			if (ser.getEdad()<ser.getEsperanzaVida()) {
-				ser.setEsperanzaVida(365/2);
+				ser.setNecesidadVital(365/2);
 				poblacion.add(ser);
 				i++;
 			}
@@ -137,8 +139,8 @@ public class Censo {
 	
 	public void actualizarDemandantes(Stack <Ser> trabajadores) {
 		for (Ser ser : poblacion) {
-			if (ser.getEdad()>17&&!trabajadores.contains(ser)) {
-				demandantes.add(ser);
+			if (ser.getEdad()>17&&ser.getEdad()<65&&!trabajadores.contains(ser)&&!demandantes.contains(ser)) {
+				demandantes.push(ser);
 			}
 		}
 	}
@@ -147,10 +149,10 @@ public class Censo {
 // for lo recorres tantas veces como (demanda-produccion)/1000
 	public void nacimiento(float demanda, float produccion) {
 		int CuantiaNacimientos=(int) ((demanda-produccion)/1000);
-		if (CuantiaNacimientos<0) {
+		if (nacimientos+CuantiaNacimientos<0) {
 			nacimientos=0;
 		}else {
-			nacimientos=CuantiaNacimientos;
+			nacimientos+=CuantiaNacimientos;
 		}
 		for (int i = 0; i < nacimientos; i++) {
 			Ser menor = new Ser(crearNombre(), CrearIdentificacion(), (int) (Math.random() * (90)));
@@ -158,16 +160,11 @@ public class Censo {
 		}
 	}
 	public void jubilarSer() {
-		for (Ser ser : poblacion) {
-			if (ser.getEdad()>=65) {
-				ser.setNecesidadVital(365f/2f);
-			}
-		}
-	}
-	public void jubiladosNuevos() {
 		jubilados=0;
 		for (Ser ser : poblacion) {
 			if (ser.getEdad()==65) {
+				ser.setNecesidadVital(365f/2f);
+				nacimientos++;
 				jubilados++;
 			}
 		}
@@ -175,17 +172,27 @@ public class Censo {
 
 	public ArrayList<Ser> morir() {
 		ArrayList<Ser> trabajadoresMuertos = new ArrayList<>();
+		ArrayList<Ser> personasMuertas=new ArrayList<Ser>();
 		for (Iterator<Ser> iterator = poblacion.iterator(); iterator.hasNext();) {
 			Ser ser = (Ser) iterator.next();
-			if (ser.getEdad() > ser.getEsperanzaVida()) {
+			if (ser.getEdad() >= ser.getEsperanzaVida()) {
 				if (!demandantes.contains(ser) && ser.getEdad() > 17 && ser.getEdad() < 65) {
 					trabajadoresMuertos.add(ser);
 				}
-				iterator.remove();
-				demandantes.remove(ser);
+				personasMuertas.add(ser);
 				muertos++;
 			}
 		}
+		for (Ser ser : personasMuertas) {
+			if (ser.getEdad()>64) {
+				jubilados--;
+			}
+			if (jubilados<0) {
+				jubilados=0;
+			}
+		}
+		demandantes.removeAll(personasMuertas);
+		poblacion.removeAll(personasMuertas);
 		return trabajadoresMuertos;
 	}
 

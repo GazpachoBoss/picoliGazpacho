@@ -12,21 +12,21 @@ public class MinisterioIndustria {
 	private float produccion;
 	private final int MIN_TRABAJADORES = 300;
 	private final int MAX_TRABAJADORES = 1000;
-	int numeroTrabajadoresNecesarios=0;
-	
+	int numeroTrabajadoresNecesarios = 0;
+
 	public float getProduccion() {
 		return produccion;
 	}
-	
+
 	public int getNumeroTrabajadoresNecesarios() {
 		return numeroTrabajadoresNecesarios;
 	}
-	
+
 	public int totalTrabajadores() {
-		int total=0;
-		
+		int total = 0;
+
 		for (Factorias factorias : industrias) {
-			total+=factorias.getNumeroTrabajadores();
+			total += factorias.getNumeroTrabajadores();
 		}
 		return total;
 	}
@@ -87,15 +87,15 @@ public class MinisterioIndustria {
 	 */
 	public void altaTrabajador(Ser ser) {
 		boolean creacion = true;
-
-		for (Factorias i : industrias) {
-			if (i.getNumeroTrabajadores() < MAX_TRABAJADORES) {
-				i.contratarTrabajador(ser);
-				creacion = false;
+			for (Factorias i : industrias) {
+				if (i.getNumeroTrabajadores() < MAX_TRABAJADORES) {
+					i.contratarTrabajador(ser);
+					creacion = false;
+				}
 			}
-		}
 		if (creacion) {
-			industrias.add(new Factorias(industrias.firstElement().getIdFactoria() + 1));
+				industrias.add(new Factorias(industrias.firstElement().getIdFactoria() + 1));
+				industrias.peek().contratarTrabajador(ser);
 		}
 	}
 
@@ -104,16 +104,18 @@ public class MinisterioIndustria {
 		int numeroIndustrias = industrias.size();
 
 		for (Factorias i : industrias) {
-			porcentajeOcupacion += i.getNumeroTrabajadores()/1000f;
+			porcentajeOcupacion += i.getNumeroTrabajadores() / 1000f;
 		}
-		
-		return (porcentajeOcupacion/numeroIndustrias)*100;
+
+		return (porcentajeOcupacion / numeroIndustrias) * 100;
 	}
 
 	public float calcularProduccionTotal() {
-
+		produccion = 0;
 		for (Factorias i : industrias) {
-			produccion = i.getNumeroTrabajadores() * MAX_TRABAJADORES;
+			if (!i.getTrabajadores().isEmpty()) {
+				produccion += i.getNumeroTrabajadores() * MAX_TRABAJADORES;
+			}
 		}
 		return produccion;
 	}
@@ -131,52 +133,60 @@ public class MinisterioIndustria {
 	public void contratarDemandantes(LinkedList<Ser> demandantes) {
 		float produccion = calcularProduccionTotal();
 		numeroTrabajadoresNecesarios = 0;
-		
+
 		if (produccion < demanda) {
 			numeroTrabajadoresNecesarios = (int) ((demanda - produccion) / 1000);
 			for (int i = 0; i < numeroTrabajadoresNecesarios; i++) {
 				if (!demandantes.isEmpty()) {
-				altaTrabajador(demandantes.pop());
+					altaTrabajador(demandantes.pop());
 				}
 			}
 		}
 	}
+
 	public void jubilarTrabajadores() {
 		for (Factorias factorias : industrias) {
 			if (factorias.getTrabajadores().isEmpty()) {
-				
-			for (Ser ser : factorias.getTrabajadores()) {
-				if (ser.getEdad()>=65) {
-					factorias.trabajadorMuerto(ser);
+				for (Ser ser : factorias.getTrabajadores()) {
+					if (ser.getEdad() >= 65) {
+						factorias.trabajadorMuerto(ser);
+					}
 				}
-			}
 			}
 		}
 	}
+
 	public void pagarSueldos() {
 
 		for (Iterator<Factorias> iterator = industrias.iterator(); iterator.hasNext();) {
 			Factorias factorias = (Factorias) iterator.next();
-			
+
 			for (Ser s : factorias.getTrabajadores()) {
 				s.setSueldo(730f);
 			}
 		}
 	}
-	
+
 	public void despedirTrabajadores(LinkedList<Ser> demandantes) {
-		float diferenciaDemandaProduccion=produccion-demanda;
-		int numeroDespidos=0;
-		if(diferenciaDemandaProduccion>0) {
-			numeroDespidos=(int) (diferenciaDemandaProduccion/1000)+1;
-			for(int i=0; i<numeroDespidos; i++) {
-				bajaTrabajador(demandantes);
+		float diferenciaDemandaProduccion = produccion - demanda;
+		int numeroDespidos = 0;
+		if (diferenciaDemandaProduccion > 0) {
+			numeroDespidos = (int) (diferenciaDemandaProduccion / 1000) + 1;
+			for (int i = 0; i < numeroDespidos; i++) {
+				if (!demandantes.isEmpty()) {
+
+					bajaTrabajador(demandantes);
+				}
 			}
 		}
 	}
 
 	public void bajaTrabajador(LinkedList<Ser> demandantes) {
-		demandantes.add(industrias.peek().despedirTrabajador());
+		if (!industrias.isEmpty()) {
+			if (!industrias.peek().getTrabajadores().isEmpty()) {
+				demandantes.add(industrias.peek().despedirTrabajador());
+			}
+		}
 	}
 
 	public void eliminaIndustrias() {

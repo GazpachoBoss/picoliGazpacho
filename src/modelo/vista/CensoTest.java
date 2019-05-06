@@ -64,93 +64,30 @@ class CensoTest {
 //	System.out.println(censo.numeroJubilados());
 		Censo cesi = new Censo();
 //	System.out.println(cesi.getPoblacion().size());
-		System.out.println(cesi.numeroTrabajadores());
 //	System.out.println(posFinal);
 
 	}
 
 	@Test
 	void testIndustria() {
-		Ser t1 = new Ser("pepe", 1234, 70);
-		t1.setEdad(56);
-		Ser t2 = new Ser("carlos", 1324, 80);
-		t2.setEdad(25);
-		Ser t3 = new Ser("ivan", 1543, 60);
-		t3.setEdad(19);
-
-		Factorias f1 = new Factorias(0000);
-		MinisterioIndustria mI = new MinisterioIndustria();
-		Stack<Factorias> Ftest = new Stack<>();
-		f1.contratarTrabajador(t1);
-		f1.contratarTrabajador(t2);
-		f1.contratarTrabajador(t3);
-		ArrayList<Ser> s = new ArrayList<>();
-		s.add(t2);
-		s.add(t3);
-		Ftest = mI.getIndustrias();
-		Ftest.add(f1);
-		mI.getIndustrias().add(f1);
-		assertTrue(mI.getIndustrias().get(1).getTrabajadores().containsAll(s));
-		mI.eliminarTrabajadoresMuertos(s);
-//		System.out.println(mI.getIndustrias().get(1).getTrabajadores().containsAll(s));
-		assertFalse(mI.getIndustrias().get(1).getTrabajadores().containsAll(s));
-		// eliminar Industrias
-
-		// elementos
-
-		Factorias fE1 = new Factorias(1);
-		Factorias fE2 = new Factorias(2);
-		Factorias fE3 = new Factorias(3);
-		ArrayList<Factorias> facArrayList = new ArrayList<Factorias>();
-
-		Factorias[] listaFactorias = { fE1, fE2, fE3 };
-		for (int i = 0; i < 400; i++) {
-			Ser ser = new Ser("paco", i, 67);
-			fE1.contratarTrabajador(ser);
+		Estado estado= new Estado();
+		LinkedList<Ser> demandantes=new LinkedList<Ser>();
+		for (int i = 0; i < 25000; i++) {
+		Ser ser =new Ser("PACO "+i, i, 67+i);		
+		demandantes.add(ser);
 		}
-		for (int i = 0; i < 400; i++) {
-			Ser ser = new Ser("juanjo", i, 67);
-			fE2.contratarTrabajador(ser);
-		}
-		for (int i = 0; i < 400; i++) {
-			Ser ser = new Ser("jesus", i, 67);
-			fE3.contratarTrabajador(ser);
-		}
-		mI.getIndustrias().clear();
-		for (int i = 0; i < listaFactorias.length; i++) {
-			mI.getIndustrias().add(listaFactorias[i]);
-			facArrayList.add(listaFactorias[i]);
-		}
-//		System.out.println(mI.getIndustrias().size());
-		System.out.println("<=============================>");
-		System.out.println();
-//		System.out.println(fE1.getTrabajadores().size(
-		assertTrue(mI.getIndustrias().containsAll(facArrayList));
-		mI.eliminaIndustrias();
-		assertFalse(mI.getIndustrias().containsAll(facArrayList));
-		mI.pagarSueldos();
-		Censo censo = new Censo();
-		// System.out.println(mI.getIndustrias().size());
-		Estado estado = new Estado();
-//		System.out.println(estado.getPoblacion().numeroTrabajadores());
-		LinkedList<Ser> demanLinkedLis= new LinkedList<Ser>();
-		for (int i = 0; i < 5000; i++) {
-			Ser ser= new Ser("pes", i, 240);
-			demanLinkedLis.add(ser);
-		}
-		System.out.println(censo.numeroMenores());
-		censo.nacimiento(2000, 152);
-		System.out.println(censo.numeroMenores());
-		for (int i = 0; i < listaFactorias.length; i++) {
-			estado.play();
-			estado.getIndustrias().setDemanda(1002000);
-			estado.getIndustrias().contratarDemandantes(demanLinkedLis);
-			System.out.println("===========================");
-			for (Factorias factorias : estado.getIndustrias().getIndustrias()) {
-				System.out.println(factorias.getNumeroTrabajadores());
-			}
-			System.out.println(demanLinkedLis.size());
-		}
+		estado.getIndustrias().setDemanda(10000000);
+		System.out.println(estado.getIndustrias().totalTrabajadores());
+		estado.getIndustrias().contratarDemandantes(demandantes);
+		System.out.println(estado.getIndustrias().totalTrabajadores());
+		System.out.println(estado.getIndustrias().getIndustrias().size());
+		assertTrue(estado.getIndustrias().getIndustrias().size()==estado.getIndustrias().getDemanda()/1000/1000);
+		System.out.println(estado.getPoblacion().getDemandantes().size());
+		System.out.println(estado.getPoblacion().getPoblacion().addAll(demandantes));
+		
+		MinisterioIndustria ministerioIndustria=new MinisterioIndustria();
+//		System.out.println(ministerioIndustria.totalTrabajadores());
+//		System.out.println(ministerioIndustria.getIndustrias().size());
 //		System.out.println(estado.getIndustrias().getDemanda());
 //		estado.getIndustrias().aumentarDemanda();
 //		System.out.println(estado.getIndustrias().getDemanda());
