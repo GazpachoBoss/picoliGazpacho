@@ -1,6 +1,6 @@
 package modelo.vista;
 
-import java.util.ArrayList;
+
 import java.util.Stack;
 
 public class Estado {
