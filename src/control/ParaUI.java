@@ -35,7 +35,7 @@ public class ParaUI extends UI {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				DatosEstadoGlobal datosEstadoGlobal = new DatosEstadoGlobal(estado.getIndustrias().getDemanda(), estado.getIndustrias().getProduccion(), estado.getFinanzas().getFondosEstado(),
-						0);
+						estado.calcularCrecimientoAnual());
 				DatosEstadoLocal datosEstadoLocal = new DatosEstadoLocal(estado.getIndustrias().getIndustrias().size(), estado.getIndustrias().calcularOcupacionTotal());
 				DatosPoblacion datosPoblacion = new DatosPoblacion(estado.getPoblacion().getPoblacionTotal( estado.getIndustrias().totalTrabajadores()), estado.getPoblacion().numeroMenores(), estado.getIndustrias().totalTrabajadores(), estado.getPoblacion().numeroJubilados(),
 						estado.getPoblacion().getNacimientos(), estado.getPoblacion().getMuertos(), estado.getPoblacion().getJubiladosNuevos(), estado.getIndustrias().getNumeroTrabajadoresNecesarios());

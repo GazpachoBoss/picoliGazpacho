@@ -75,27 +75,17 @@ public class MinisterioIndustria {
 		}
 	}
 
-	/*
-	 * public int jubilarTrabajadores(){ int jubilaciones=0; ArrayList<Ser>
-	 * jubilados = new ArrayList<>(); for (Iterator<Factorias> iterator =
-	 * industrias.iterator(); iterator.hasNext();) { Factorias factorias =
-	 * (Factorias) iterator.next(); for (Ser ser : factorias.getTrabajadores()) {
-	 * if(ser.getEdad()>64) { jubilados.add(ser); jubilaciones++; //lo acabo de
-	 * poner yo (jesus) } factorias.getTrabajadores().removeAll(jubilados); } }
-	 * return jubilaciones; }
-	 * 
-	 */
 	public void altaTrabajador(Ser ser) {
 		boolean creacion = true;
-			for (Factorias i : industrias) {
-				if (i.getNumeroTrabajadores() < MAX_TRABAJADORES) {
-					i.contratarTrabajador(ser);
-					creacion = false;
-				}
+		for (Factorias i : industrias) {
+			if (i.getNumeroTrabajadores() < MAX_TRABAJADORES) {
+				i.contratarTrabajador(ser);
+				creacion = false;
 			}
+		}
 		if (creacion) {
-				industrias.add(new Factorias(industrias.firstElement().getIdFactoria() + 1));
-				industrias.peek().contratarTrabajador(ser);
+			industrias.add(new Factorias(industrias.firstElement().getIdFactoria() + 1));
+			industrias.peek().contratarTrabajador(ser);
 		}
 	}
 
